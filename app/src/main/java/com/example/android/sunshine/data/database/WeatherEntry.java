@@ -16,10 +16,16 @@
 
 package com.example.android.sunshine.data.database;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.Date;
 
+@Entity(tableName = "weather", indices = {@Index(value = {"date"}, unique = true)})
 public class WeatherEntry {
-
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private int weatherIconId;
     private Date date;
@@ -42,6 +48,7 @@ public class WeatherEntry {
      * @param wind Wind speed
      * @param degrees Wind direction
      */
+    @Ignore
     public WeatherEntry(int weatherIconId, Date date, double min, double max, double humidity, double pressure, double wind, double degrees) {
         this.weatherIconId = weatherIconId;
         this.date = date;
@@ -51,6 +58,11 @@ public class WeatherEntry {
         this.pressure = pressure;
         this.wind = wind;
         this.degrees = degrees;
+    }
+
+    public WeatherEntry(int id, int weatherIconId, Date date, double min, double max, double humidity, double pressure, double wind, double degrees) {
+        this(weatherIconId, date, min, max, humidity, pressure, wind, degrees);
+        this.id = id;
     }
 
     public int getId() {
