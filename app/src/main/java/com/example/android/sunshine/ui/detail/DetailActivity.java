@@ -15,13 +15,18 @@
  */
 package com.example.android.sunshine.ui.detail;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.android.sunshine.AppExecutors;
 import com.example.android.sunshine.R;
+import com.example.android.sunshine.data.SunshineRepository;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.databinding.ActivityDetailBinding;
+import com.example.android.sunshine.utilities.InjectorUtils;
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 import com.example.android.sunshine.utilities.SunshineWeatherUtils;
 
@@ -43,14 +48,21 @@ public class DetailActivity extends AppCompatActivity {
      */
     private ActivityDetailBinding mDetailBinding;
 
+    private DetailActivityViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        long timestamp = getIntent().getLongExtra(WEATHER_ID_EXTRA, -1);
-        Date date = new Date(timestamp);
 
+        long timestamp = getIntent().getLongExtra(WEATHER_ID_EXTRA, -1);
+        Date date = SunshineDateUtils.getNormalizedUtcDateForToday();
+        DetailViewModelFactory detailViewModelFactory = InjectorUtils.provideDetailViewModelFactory(this, date);
+
+        mViewModel = ViewModelProviders.of(this, detailViewModelFactory).get(DetailActivityViewModel.class);
+        mViewModel.getWeather().observe(this, weatherEntry -> {
+            if (weatherEntry != null) bindWeatherToUI(weatherEntry);
+        });
     }
 
     private void bindWeatherToUI(WeatherEntry weatherEntry) {

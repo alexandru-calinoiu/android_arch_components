@@ -15,11 +15,13 @@
  */
 package com.example.android.sunshine.data.network;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import com.example.android.sunshine.AppExecutors;
+import com.example.android.sunshine.data.database.WeatherEntry;
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -45,6 +47,7 @@ public class WeatherNetworkDataSource {
     private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
     private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3;
     private static final String SUNSHINE_SYNC_TAG = "sunshine-sync";
+    private final MutableLiveData<WeatherEntry[]> mDownloadedWeatherForecast = new MutableLiveData<>();
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
@@ -166,7 +169,7 @@ public class WeatherNetworkDataSource {
                             response.getWeatherForecast()[0].getMax()));
 
                     // TODO Finish this method when instructed.
-                    // Will eventually do something with the downloaded data
+                    mDownloadedWeatherForecast.postValue(response.getWeatherForecast());
                 }
             } catch (Exception e) {
                 // Server probably invalid
@@ -175,4 +178,7 @@ public class WeatherNetworkDataSource {
         });
     }
 
+    public MutableLiveData<WeatherEntry[]> getCurrentWeatherForecasts() {
+        return mDownloadedWeatherForecast;
+    }
 }

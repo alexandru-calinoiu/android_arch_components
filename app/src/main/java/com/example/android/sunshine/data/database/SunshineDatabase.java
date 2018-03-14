@@ -16,7 +16,7 @@ public abstract class SunshineDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static volatile SunshineDatabase sInstance;
 
-    public static SunshineDatabase getsInstance(Context context) {
+    public static SunshineDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 if (sInstance == null) {
