@@ -24,5 +24,5 @@ public interface WeatherDao {
     void deleteOldData(Date date);
 
     @Query("SELECT * FROM weather WHERE date >= :date")
-    LiveData<List<WeatherEntry>> getForecastsAfter(Date date);
+    LiveData<List<ListViewWeatherEntry>> getForecastsAfter(Date date);
 }

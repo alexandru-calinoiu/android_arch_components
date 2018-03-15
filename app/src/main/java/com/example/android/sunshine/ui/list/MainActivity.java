@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements
         mViewModel = ViewModelProviders.of(this, mainActivityViewModelFactory).get(MainActivityViewModel.class);
         mViewModel.getForecasts().observe(this, weatherEntries -> {
             mForecastAdapter.swapForecast(weatherEntries);
-            hideLoading();
+            showWeatherDataView();
         });
     }
 
@@ -154,12 +154,5 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setVisibility(View.INVISIBLE);
         // Finally, show the loading indicator
         mLoadingIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideLoading() {
-        // Then, hide the weather data
-        mRecyclerView.setVisibility(View.VISIBLE);
-        // Finally, show the loading indicator
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 }

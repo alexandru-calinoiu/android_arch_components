@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.example.android.sunshine.data.SunshineRepository;
-import com.example.android.sunshine.data.database.WeatherEntry;
+import com.example.android.sunshine.data.database.ListViewWeatherEntry;
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 
 import java.util.Date;
@@ -19,7 +19,7 @@ public class MainActivityViewModel extends ViewModel {
         mDate = SunshineDateUtils.getNormalizedUtcDateForToday();
     }
 
-    public LiveData<List<WeatherEntry>> getForecasts() {
+    public LiveData<List<ListViewWeatherEntry>> getForecasts() {
         return mRepository.getForecastsFromDate(mDate);
     }
 }
