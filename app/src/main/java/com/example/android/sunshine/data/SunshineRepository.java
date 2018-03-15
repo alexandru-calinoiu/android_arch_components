@@ -24,8 +24,10 @@ import com.example.android.sunshine.AppExecutors;
 import com.example.android.sunshine.data.database.WeatherDao;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.data.network.WeatherNetworkDataSource;
+import com.example.android.sunshine.utilities.SunshineDateUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Handles data operations in Sunshine. Acts as a mediator between {@link WeatherNetworkDataSource}
@@ -81,6 +83,11 @@ public class SunshineRepository {
         return mWeatherDao.getWeatherByDate(date);
     }
 
+    public LiveData<List<WeatherEntry>> getForecastsFromDate(Date date) {
+        initializeData();
+        return mWeatherDao.getForecastsAfter(date);
+    }
+
     /**
      * Database related operations
      **/
@@ -95,11 +102,16 @@ public class SunshineRepository {
         if (mInitialized) return;
         mInitialized = true;
 
-        startFetchWeatherService();
+        mExecutors.diskIO().execute(() -> {
+            if (isFetchNeeded()) {
+                startFetchWeatherService();
+            }
+        });
     }
 
     private void deleteOldData() {
-        // TODO Finish this method when instructed
+        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
+        mWeatherDao.deleteOldData(today);
     }
 
     /**
@@ -108,8 +120,8 @@ public class SunshineRepository {
      * @return Whether a fetch is needed
      */
     private boolean isFetchNeeded() {
-        // TODO Finish this method when instructed
-        return true;
+        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
+        return mWeatherDao.countAllFutureWeather(today) < 13;
     }
 
     /**

@@ -23,6 +23,7 @@ import com.example.android.sunshine.data.SunshineRepository;
 import com.example.android.sunshine.data.database.SunshineDatabase;
 import com.example.android.sunshine.data.network.WeatherNetworkDataSource;
 import com.example.android.sunshine.ui.detail.DetailViewModelFactory;
+import com.example.android.sunshine.ui.list.MainActivityViewModelFactory;
 
 import java.util.Date;
 
@@ -48,14 +49,8 @@ public class InjectorUtils {
         return new DetailViewModelFactory(provideRepository(context), date);
     }
 
-//    public static DetailViewModelFactory provideDetailViewModelFactory(Context context, Date date) {
-//        SunshineRepository repository = provideRepository(context.getApplicationContext());
-//        return new DetailViewModelFactory(repository, date);
-//    }
-//
-//    public static MainViewModelFactory provideMainActivityViewModelFactory(Context context) {
-//        SunshineRepository repository = provideRepository(context.getApplicationContext());
-//        return new MainViewModelFactory(repository);
-//    }
-
+    public static MainActivityViewModelFactory provideMainActivityViewModelFactory(Context context) {
+        SunshineRepository repository = provideRepository(context.getApplicationContext());
+        return new MainActivityViewModelFactory(repository);
+    }
 }

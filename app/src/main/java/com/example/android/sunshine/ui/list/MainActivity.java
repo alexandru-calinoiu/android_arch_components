@@ -15,6 +15,8 @@
  */
 package com.example.android.sunshine.ui.list;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,7 @@ import android.widget.ProgressBar;
 
 import com.example.android.sunshine.R;
 import com.example.android.sunshine.ui.detail.DetailActivity;
+import com.example.android.sunshine.utilities.InjectorUtils;
 
 import java.util.Date;
 
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private int mPosition = RecyclerView.NO_POSITION;
     private ProgressBar mLoadingIndicator;
+
+    private MainActivityViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +107,12 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(mForecastAdapter);
         showLoading();
 
+        MainActivityViewModelFactory mainActivityViewModelFactory = InjectorUtils.provideMainActivityViewModelFactory(this);
+        mViewModel = ViewModelProviders.of(this, mainActivityViewModelFactory).get(MainActivityViewModel.class);
+        mViewModel.getForecasts().observe(this, weatherEntries -> {
+            mForecastAdapter.swapForecast(weatherEntries);
+            hideLoading();
+        });
     }
 
     /**
@@ -143,5 +154,12 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setVisibility(View.INVISIBLE);
         // Finally, show the loading indicator
         mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        // Then, hide the weather data
+        mRecyclerView.setVisibility(View.VISIBLE);
+        // Finally, show the loading indicator
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 }
